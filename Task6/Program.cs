@@ -26,18 +26,24 @@ namespace Task6
 
         //0 - монотонно неубывающая (x(n) <= x(n+1))
         //1 - строго возрастающая   (x(n) < x(n+1))
+        //-1 - никакая
         static int SequenceType(double?[] sequence)
         {
-            bool isEqual = false;
+            bool isEqual = false, isWeird = false;
             for (int i = 1; i < sequence.Length; i++)
             {
-                if (sequence[i - 1] == sequence[i])
+                if (sequence[i - 1] > sequence[i])
                 {
-                    isEqual = true;
+                    isWeird = true;
                     break;
                 }
+
+                if (sequence[i - 1] == sequence[i])
+                    isEqual = true;
             }
 
+            if (isWeird)
+                return -1;
             if (isEqual)
                 return 0;
             return 1;
@@ -47,6 +53,12 @@ namespace Task6
         {
             double first = Input.ReadDouble("Введите число a1: ");
             double second = Input.ReadDouble("Введите число a2: ");
+            while (second == -2)
+            {
+                Console.WriteLine("Ошибка! a2 не может равняться -2, потому что это приведет к делению на 0.\n" +
+                                  "Повторите ввод.");
+                second = Input.ReadDouble("Введите число a2: ");
+            }
             double third = Input.ReadDouble("Введите число a3: ");
             int N = Input.ReadInt("Введите количество элементов последовательности, которые хотите посмотреть: ");
 
@@ -58,7 +70,14 @@ namespace Task6
             foreach (double i in arr)
                 Console.Write("{0:F4} ", i);
 
-            Console.WriteLine("\nПоследовательность {0}", SequenceType(arr) == 0 ? "монотонно неубывающая." : "строго возрастающая.");
+            Console.Write("\nПоследовательность ");
+            int sequenceType = SequenceType(arr);
+            if(sequenceType == 0)
+                Console.WriteLine("монотонно неубывающая.");
+            else if (sequenceType == 1)
+                Console.WriteLine("строго возрастающая");
+            else
+                Console.WriteLine("не имеет определенного типа.");
         }
     }
 }
